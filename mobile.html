@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1> Soy movil </h1>
+    
+        <button  type="button" class="btn btn-success btn-lg" onClick="test();">Start</button>
+        
+        <div class="main">
+          <h2>Device Orientation</h2>
+          <table>
+            <tr>
+              <td>Event Supported</td>
+              <td id="doEvent"></td>
+            </tr>
+            <tr>
+              <td>Tilt Left/Right [gamma]</td>
+              <td id="doTiltLR"></td>
+            </tr>
+            <tr>
+              <td>Tilt Front/Back [beta]</td>
+              <td id="doTiltFB"></td>
+            </tr>
+            <tr>
+              <td>Direction [alpha]</td>
+              <td id="doDirection"></td>
+            </tr>
+           </table>
+        </div>
+        
+        <div class="container" style="perspective: 300;">
+          <img src="acm_logo.png" id="imgLogo" class="logo">
+        </div>
+    </body>
+    
+    <script type="text/javascript" src="bundle.js"></script>
+    <script type="text/javascript">
+        
+        
+       function test() {
+           if (window.DeviceOrientationEvent) {
+           console.log("DeviceOrientation is supported");
+           // Listen for the event and handle DeviceOrientationEvent object
+           window.addEventListener('deviceorientation', devOrientHandler, false);
+           } else {
+               console.log("DeviceOrientation Not supported");
+               document.getElementById("doEvent").innerHTML = "Not supported."
+           }
+           //connect();
+       }
+       
+       
+       
+        var devOrientHandler  = function(eventData) {
+            // gamma is the left-to-right tilt in degrees, where right is positive
+            var tiltLR = eventData.gamma;
+            
+            // beta is the front-to-back tilt in degrees, where front is positive
+            var tiltFB = eventData.beta;
+            
+            // alpha is the compass direction the device is facing in degrees
+            var dir = eventData.alpha
+            
+            // call our orientation event handler
+            deviceOrientationHandler(tiltLR, tiltFB, dir);
+        }
+        
+        function deviceOrientationHandler(tiltLR, tiltFB, dir, motionUD) {
+            
+           document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR);
+            document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB);
+            document.getElementById("doDirection").innerHTML = Math.round(dir);
+            
+            // Apply the transform to the image
+            var logo = document.getElementById("imgLogo");
+            logo.style.webkitTransform =
+              "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+            logo.style.MozTransform = "rotate("+ tiltLR +"deg)";
+            logo.style.transform =
+              "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+        }
+    </script>
+</html>
